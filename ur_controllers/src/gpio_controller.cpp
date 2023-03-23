@@ -71,6 +71,10 @@ controller_interface::InterfaceConfiguration GPIOController::command_interface_c
 
   config.names.emplace_back("resend_robot_program/resend_robot_program_async_success");
 
+  config.names.emplace_back("send_script/send_script_cmd");
+
+  config.names.emplace_back("send_script/send_script_async_success");
+
   // payload stuff
   config.names.emplace_back("payload/mass");
   config.names.emplace_back("payload/cog.x");
