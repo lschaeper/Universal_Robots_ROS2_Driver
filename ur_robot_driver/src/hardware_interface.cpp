@@ -325,6 +325,9 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   // endeffector might be inaccurate. See the "ur_calibration" package on help how to generate your
   // own hash matching your actual robot.
   std::string calibration_checksum = info_.hardware_parameters["kinematics/hash"];
+  // Filepath for code injection as a workaround since ros2_control doesnt support strings
+  std::string open_gripper_filename = info_.hardware_parameters["open_gripper_filename"];
+  std::string close_gripper_filename = info_.hardware_parameters["close_gripper_filename"];
 
   std::unique_ptr<urcl::ToolCommSetup> tool_comm_setup;
   if (use_tool_communication) {
@@ -417,6 +420,24 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
                         "pass that into the description. See "
                         "[https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_calibration/"
                         "README.md] for details.");
+  }
+
+  std::ifstream open_file(open_gripper_filename);
+  if (file.is_open()) {
+    open_gripper_script((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    // Do something with the YAML contents in the open_gripper_script string
+  } else {
+    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read open gripper script from file");
+  }
+
+  std::ifstream close_file(close_gripper_filename);
+  if (file.is_open()) {
+    close_gripper_script((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    // Do something with the YAML contents in the open_gripper_script string
+  } else {
+    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read close gripper script from file");
   }
 
   ur_driver_->startRTDECommunication();
@@ -653,7 +674,7 @@ void URPositionHardwareInterface::checkAsyncIO()
 
   if (!std::isnan(open_gripper_cmd_) && ur_driver_ != nullptr) {
     try {
-      open_gripper_async_success_ = ur_driver_->sendRobotProgram();
+      open_gripper_async_success_ = ur_driver_->sendScript(open_gripper_script);
     } catch (const urcl::UrException& e) {
       RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Service Call failed: '%s'", e.what());
     }
@@ -662,7 +683,7 @@ void URPositionHardwareInterface::checkAsyncIO()
 
   if (!std::isnan(close_gripper_cmd_) && ur_driver_ != nullptr) {
     try {
-      close_gripper_async_success_ = ur_driver_->sendRobotProgram();
+      close_gripper_async_success_ = ur_driver_->sendScript(close_gripper_script);
     } catch (const urcl::UrException& e) {
       RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Service Call failed: '%s'", e.what());
     }

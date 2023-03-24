@@ -42,6 +42,7 @@
 // System
 #include <memory>
 #include <string>
+#include <fstream>
 #include <vector>
 #include <limits>
 
@@ -220,6 +221,9 @@ protected:
 
   std::unique_ptr<urcl::UrDriver> ur_driver_;
   std::shared_ptr<std::thread> async_thread_;
+
+  std::string open_gripper_script;
+  std::string close_gripper_script;
 };
 }  // namespace ur_robot_driver
 
