@@ -423,18 +423,18 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   }
 
   std::ifstream open_file(open_gripper_filename);
-  if (file.is_open()) {
-    open_gripper_script((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close();
+  if (open_file.is_open()) {
+    open_gripper_script((std::istreambuf_iterator<char>(open_file)), std::istreambuf_iterator<char>());
+    open_file.close();
     // Do something with the YAML contents in the open_gripper_script string
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read open gripper script from file");
   }
 
   std::ifstream close_file(close_gripper_filename);
-  if (file.is_open()) {
-    close_gripper_script((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close();
+  if (close_file.is_open()) {
+    close_gripper_script((std::istreambuf_iterator<char>(close_file)), std::istreambuf_iterator<char>());
+    close_file.close();
     // Do something with the YAML contents in the open_gripper_script string
   } else {
     RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read close gripper script from file");
