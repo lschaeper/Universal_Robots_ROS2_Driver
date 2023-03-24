@@ -71,9 +71,13 @@ controller_interface::InterfaceConfiguration GPIOController::command_interface_c
 
   config.names.emplace_back("resend_robot_program/resend_robot_program_async_success");
 
-  config.names.emplace_back("send_script/send_script_cmd");
+  config.names.emplace_back("open_gripper/open_gripper_cmd");
 
-  config.names.emplace_back("send_script/send_script_async_success");
+  config.names.emplace_back("open_gripper/open_gripper_async_success");
+
+  config.names.emplace_back("close_gripper/close_gripper_cmd");
+
+  config.names.emplace_back("close_gripper/close_gripper_async_success");
 
   // payload stuff
   config.names.emplace_back("payload/mass");
@@ -278,6 +282,14 @@ ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*pre
 
     set_payload_srv_ = get_node()->create_service<ur_msgs::srv::SetPayload>(
         "~/set_payload", std::bind(&GPIOController::setPayload, this, std::placeholders::_1, std::placeholders::_2));
+
+    open_gripper_srv_ = get_node()->create_service<std_srvs::srv::Trigger>(
+        "~/open_gripper",
+        std::bind(&GPIOController::openGripper, this, std::placeholders::_1, std::placeholders::_2));
+
+    close_gripper_srv_ = get_node()->create_service<std_srvs::srv::Trigger>(
+        "~/close_gripper",
+        std::bind(&GPIOController::closeGripper, this, std::placeholders::_1, std::placeholders::_2));
   } catch (...) {
     return LifecycleNodeInterface::CallbackReturn::ERROR;
   }
@@ -411,6 +423,56 @@ bool GPIOController::setPayload(const ur_msgs::srv::SetPayload::Request::SharedP
     RCLCPP_INFO(get_node()->get_logger(), "Payload has been set successfully");
   } else {
     RCLCPP_ERROR(get_node()->get_logger(), "Could not set the payload");
+    return false;
+  }
+
+  return true;
+}
+
+bool GPIOController::openGripper(std_srvs::srv::Trigger::Request::SharedPtr /*req*/,
+                                        std_srvs::srv::Trigger::Response::SharedPtr resp)
+{
+  // reset success flag
+  command_interfaces_[CommandInterfaces::OPEN_GRIPPER_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+  // call the service in the hardware
+  command_interfaces_[CommandInterfaces::OPEN_GRIPPER_CMD].set_value(1.0);
+
+  while (command_interfaces_[CommandInterfaces::OPEN_GRIPPER_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+    // Asynchronous wait until the hardware interface has set the slider value
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+  resp->success =
+      static_cast<bool>(command_interfaces_[CommandInterfaces::OPEN_GRIPPER_ASYNC_SUCCESS].get_value());
+
+  if (resp->success) {
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully resent robot program");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not resend robot program");
+    return false;
+  }
+
+  return true;
+}
+
+bool GPIOController::closeGripper(std_srvs::srv::Trigger::Request::SharedPtr /*req*/,
+                                        std_srvs::srv::Trigger::Response::SharedPtr resp)
+{
+  // reset success flag
+  command_interfaces_[CommandInterfaces::CLOSE_GRIPPER_ASYNC_SUCCESS].set_value(ASYNC_WAITING);
+  // call the service in the hardware
+  command_interfaces_[CommandInterfaces::CLOSE_GRIPPER_CMD].set_value(1.0);
+
+  while (command_interfaces_[CommandInterfaces::CLOSE_GRIPPER_ASYNC_SUCCESS].get_value() == ASYNC_WAITING) {
+    // Asynchronous wait until the hardware interface has set the slider value
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+  resp->success =
+      static_cast<bool>(command_interfaces_[CommandInterfaces::CLOSE_GRIPPER_ASYNC_SUCCESS].get_value());
+
+  if (resp->success) {
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully resent robot program");
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Could not resend robot program");
     return false;
   }
 

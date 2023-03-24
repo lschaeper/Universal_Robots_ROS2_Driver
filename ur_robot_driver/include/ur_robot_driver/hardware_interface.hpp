@@ -179,8 +179,10 @@ protected:
   double scaling_async_success_;
   double resend_robot_program_cmd_;
   double resend_robot_program_async_success_;
-  double send_script_cmd_;
-  double send_script_async_success_;
+  double open_gripper_cmd_;
+  double open_gripper_async_success_;
+  double close_gripper_cmd_;
+  double close_gripper_async_success_;
   bool first_pass_;
   bool initialized_;
   double system_interface_initialized_;

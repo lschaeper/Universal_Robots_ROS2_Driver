@@ -245,10 +245,16 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
       "resend_robot_program", "resend_robot_program_async_success", &resend_robot_program_async_success_));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      "send_script", "send_script_cmd", &send_script_cmd_));
+      "open_gripper", "open_gripper_cmd", &open_gripper_cmd_));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      "send_script", "send_script_async_success", &send_script_async_success_));
+      "open_gripper", "open_gripper_async_success", &open_gripper_async_success_));
+
+  command_interfaces.emplace_back(hardware_interface::CommandInterface(
+      "close_gripper", "close_gripper_cmd", &close_gripper_cmd_));
+
+  command_interfaces.emplace_back(hardware_interface::CommandInterface(
+      "close_gripper", "close_gripper_async_success", &close_gripper_async_success_));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface("payload", "mass", &payload_mass_));
   command_interfaces.emplace_back(
@@ -547,7 +553,8 @@ hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::
       urcl_velocity_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
       target_speed_fraction_cmd_ = NO_NEW_CMD_;
       resend_robot_program_cmd_ = NO_NEW_CMD_;
-      send_script_cmd_ = NO_NEW_CMD_;
+      open_gripper_cmd_ = NO_NEW_CMD_;
+      close_gripper_cmd_ = NO_NEW_CMD_;
       initialized_ = true;
     }
 
@@ -644,13 +651,22 @@ void URPositionHardwareInterface::checkAsyncIO()
     resend_robot_program_cmd_ = NO_NEW_CMD_;
   }
 
-  if (!std::isnan(send_script_cmd_) && ur_driver_ != nullptr) {
+  if (!std::isnan(open_gripper_cmd_) && ur_driver_ != nullptr) {
     try {
-      send_script_async_success_ = ur_driver_->sendRobotProgram();
+      open_gripper_async_success_ = ur_driver_->sendRobotProgram();
     } catch (const urcl::UrException& e) {
       RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Service Call failed: '%s'", e.what());
     }
-    send_script_cmd_ = NO_NEW_CMD_;
+    open_gripper_cmd_ = NO_NEW_CMD_;
+  }
+
+  if (!std::isnan(close_gripper_cmd_) && ur_driver_ != nullptr) {
+    try {
+      close_gripper_async_success_ = ur_driver_->sendRobotProgram();
+    } catch (const urcl::UrException& e) {
+      RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Service Call failed: '%s'", e.what());
+    }
+    close_gripper_cmd_ = NO_NEW_CMD_;
   }
 
   if (!std::isnan(payload_mass_) && !std::isnan(payload_center_of_gravity_[0]) &&

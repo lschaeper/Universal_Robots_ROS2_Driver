@@ -73,6 +73,10 @@ enum CommandInterfaces
   PAYLOAD_COG_Y = 27,
   PAYLOAD_COG_Z = 28,
   PAYLOAD_ASYNC_SUCCESS = 29,
+  OPEN_GRIPPER_CMD = 30;
+  OPEN_GRIPPER_ASYNC_SUCCESS = 31;
+  CLOSE_GRIPPER_CMD = 32;
+  CLOSE_GRIPPER_ASYNC_SUCCESS = 33;
 };
 
 enum StateInterfaces
@@ -125,6 +129,12 @@ private:
   bool setPayload(const ur_msgs::srv::SetPayload::Request::SharedPtr req,
                   ur_msgs::srv::SetPayload::Response::SharedPtr resp);
 
+  bool openGripper(std_srvs::srv::Trigger::Request::SharedPtr req,
+                  std_srvs::srv::Trigger::Response::SharedPtr resp);
+
+  bool closeGripper(std_srvs::srv::Trigger::Request::SharedPtr req,
+                    std_srvs::srv::Trigger::Response::SharedPtr resp);
+
   void publishIO();
 
   void publishToolData();
@@ -150,6 +160,8 @@ protected:
   rclcpp::Service<ur_msgs::srv::SetSpeedSliderFraction>::SharedPtr set_speed_slider_srv_;
   rclcpp::Service<ur_msgs::srv::SetIO>::SharedPtr set_io_srv_;
   rclcpp::Service<ur_msgs::srv::SetPayload>::SharedPtr set_payload_srv_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr open_gripper_srv_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr close_gripper_srv_;
 
   std::shared_ptr<rclcpp::Publisher<ur_msgs::msg::IOStates>> io_pub_;
   std::shared_ptr<rclcpp::Publisher<ur_msgs::msg::ToolDataMsg>> tool_data_pub_;
