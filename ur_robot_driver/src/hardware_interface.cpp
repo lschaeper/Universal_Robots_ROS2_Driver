@@ -326,8 +326,8 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   // own hash matching your actual robot.
   std::string calibration_checksum = info_.hardware_parameters["kinematics/hash"];
   // Filepath for code injection as a workaround since ros2_control doesnt support strings
-  std::string open_gripper_script = info_.hardware_parameters["open_gripper_script"];
-  std::string close_gripper_script = info_.hardware_parameters["close_gripper_script"];
+  open_gripper_script = info_.hardware_parameters["open_gripper"];
+  close_gripper_script = info_.hardware_parameters["close_gripper"];
 
   if (open_gripper_script.back() != '\n')
   {
