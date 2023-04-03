@@ -326,8 +326,8 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   // own hash matching your actual robot.
   std::string calibration_checksum = info_.hardware_parameters["kinematics/hash"];
   // Filepath for code injection as a workaround since ros2_control doesnt support strings
-  std::string open_gripper_filename = info_.hardware_parameters["open_gripper_filename"];
-  std::string close_gripper_filename = info_.hardware_parameters["close_gripper_filename"];
+  std::string open_gripper_script = info_.hardware_parameters["open_gripper_script"];
+  std::string close_gripper_script = info_.hardware_parameters["close_gripper_script"];
 
   std::unique_ptr<urcl::ToolCommSetup> tool_comm_setup;
   if (use_tool_communication) {
@@ -420,24 +420,6 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
                         "pass that into the description. See "
                         "[https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_calibration/"
                         "README.md] for details.");
-  }
-
-  std::ifstream open_file(open_gripper_filename);
-  if (open_file.is_open()) {
-    open_gripper_script((std::istreambuf_iterator<char>(open_file)), std::istreambuf_iterator<char>());
-    open_file.close();
-    // Do something with the YAML contents in the open_gripper_script string
-  } else {
-    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read open gripper script from file");
-  }
-
-  std::ifstream close_file(close_gripper_filename);
-  if (close_file.is_open()) {
-    close_gripper_script((std::istreambuf_iterator<char>(close_file)), std::istreambuf_iterator<char>());
-    close_file.close();
-    // Do something with the YAML contents in the open_gripper_script string
-  } else {
-    RCLCPP_ERROR(rclcpp::get_logger("URPositionHardwareInterface"), "Unable to read close gripper script from file");
   }
 
   ur_driver_->startRTDECommunication();
