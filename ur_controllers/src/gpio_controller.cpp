@@ -71,6 +71,13 @@ controller_interface::InterfaceConfiguration GPIOController::command_interface_c
 
   config.names.emplace_back("resend_robot_program/resend_robot_program_async_success");
 
+  // payload stuff
+  config.names.emplace_back("payload/mass");
+  config.names.emplace_back("payload/cog.x");
+  config.names.emplace_back("payload/cog.y");
+  config.names.emplace_back("payload/cog.z");
+  config.names.emplace_back("payload/payload_async_success");
+
   config.names.emplace_back("open_gripper/open_gripper_cmd");
 
   config.names.emplace_back("open_gripper/open_gripper_async_success");
@@ -78,13 +85,6 @@ controller_interface::InterfaceConfiguration GPIOController::command_interface_c
   config.names.emplace_back("close_gripper/close_gripper_cmd");
 
   config.names.emplace_back("close_gripper/close_gripper_async_success");
-
-  // payload stuff
-  config.names.emplace_back("payload/mass");
-  config.names.emplace_back("payload/cog.x");
-  config.names.emplace_back("payload/cog.y");
-  config.names.emplace_back("payload/cog.z");
-  config.names.emplace_back("payload/payload_async_success");
 
   return config;
 }

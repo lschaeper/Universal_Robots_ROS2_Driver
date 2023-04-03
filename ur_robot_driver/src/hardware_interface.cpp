@@ -244,6 +244,16 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
       "resend_robot_program", "resend_robot_program_async_success", &resend_robot_program_async_success_));
 
+  command_interfaces.emplace_back(hardware_interface::CommandInterface("payload", "mass", &payload_mass_));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface("payload", "cog.x", &payload_center_of_gravity_[0]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface("payload", "cog.y", &payload_center_of_gravity_[1]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface("payload", "cog.z", &payload_center_of_gravity_[2]));
+  command_interfaces.emplace_back(
+      hardware_interface::CommandInterface("payload", "payload_async_success", &payload_async_success_));
+
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
       "open_gripper", "open_gripper_cmd", &open_gripper_cmd_));
 
@@ -255,16 +265,6 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface(
       "close_gripper", "close_gripper_async_success", &close_gripper_async_success_));
-
-  command_interfaces.emplace_back(hardware_interface::CommandInterface("payload", "mass", &payload_mass_));
-  command_interfaces.emplace_back(
-      hardware_interface::CommandInterface("payload", "cog.x", &payload_center_of_gravity_[0]));
-  command_interfaces.emplace_back(
-      hardware_interface::CommandInterface("payload", "cog.y", &payload_center_of_gravity_[1]));
-  command_interfaces.emplace_back(
-      hardware_interface::CommandInterface("payload", "cog.z", &payload_center_of_gravity_[2]));
-  command_interfaces.emplace_back(
-      hardware_interface::CommandInterface("payload", "payload_async_success", &payload_async_success_));
 
   for (size_t i = 0; i < 18; ++i) {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
@@ -430,6 +430,10 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
                         "[https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_calibration/"
                         "README.md] for details.");
   }
+
+  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), open_gripper_script);
+  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), close_gripper_script);
+
 
   ur_driver_->startRTDECommunication();
 
@@ -664,6 +668,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(open_gripper_cmd_) && ur_driver_ != nullptr) {
+    RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Received open gripper command in hardware interface");
     try {
       open_gripper_async_success_ = ur_driver_->sendScript(open_gripper_script);
     } catch (const urcl::UrException& e) {
@@ -673,6 +678,7 @@ void URPositionHardwareInterface::checkAsyncIO()
   }
 
   if (!std::isnan(close_gripper_cmd_) && ur_driver_ != nullptr) {
+    RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Received close gripper command in hardware interface");
     try {
       close_gripper_async_success_ = ur_driver_->sendScript(close_gripper_script);
     } catch (const urcl::UrException& e) {
