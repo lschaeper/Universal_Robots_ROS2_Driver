@@ -445,7 +445,7 @@ bool GPIOController::openGripper(std_srvs::srv::Trigger::Request::SharedPtr /*re
       static_cast<bool>(command_interfaces_[CommandInterfaces::OPEN_GRIPPER_ASYNC_SUCCESS].get_value());
 
   if (resp->success) {
-    RCLCPP_INFO(get_node()->get_logger(), "Successfully resent robot program");
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully opened gripper");
   } else {
     RCLCPP_ERROR(get_node()->get_logger(), "Could not resend robot program");
     return false;
@@ -470,7 +470,7 @@ bool GPIOController::closeGripper(std_srvs::srv::Trigger::Request::SharedPtr /*r
       static_cast<bool>(command_interfaces_[CommandInterfaces::CLOSE_GRIPPER_ASYNC_SUCCESS].get_value());
 
   if (resp->success) {
-    RCLCPP_INFO(get_node()->get_logger(), "Successfully resent robot program");
+    RCLCPP_INFO(get_node()->get_logger(), "Successfully closed gripper");
   } else {
     RCLCPP_ERROR(get_node()->get_logger(), "Could not resend robot program");
     return false;

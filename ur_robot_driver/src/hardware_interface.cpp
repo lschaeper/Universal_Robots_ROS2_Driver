@@ -431,9 +431,8 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
                         "README.md] for details.");
   }
 
-  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), open_gripper_script.c_str());
-  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), close_gripper_script.c_str());
-
+  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Open Gripper Command: '%s'", open_gripper_script.c_str());
+  RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Close Gripper Command: '%s'", close_gripper_script.c_str());
 
   ur_driver_->startRTDECommunication();
 
