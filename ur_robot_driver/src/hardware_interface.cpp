@@ -329,6 +329,15 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   std::string open_gripper_script = info_.hardware_parameters["open_gripper_script"];
   std::string close_gripper_script = info_.hardware_parameters["close_gripper_script"];
 
+  if (open_gripper_script.back() != '\n')
+  {
+    open_gripper_script.append("\n");
+  }
+  if (close_gripper_script.back() != '\n')
+  {
+    close_gripper_script.append("\n");
+  }
+
   std::unique_ptr<urcl::ToolCommSetup> tool_comm_setup;
   if (use_tool_communication) {
     tool_comm_setup = std::make_unique<urcl::ToolCommSetup>();
