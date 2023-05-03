@@ -356,8 +356,7 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     // Tool voltage that will be set as soon as the UR-Program on the robot is started. Note: This
     // parameter is only evaluated, when the parameter "use_tool_communication" is set to TRUE.
     // Then, this parameter is required.}
-    tool_voltage = std::stoi(info_.hardware_parameters["tool_voltage"]);
-
+    const ToolVoltageT tool_voltage = std::stoi(info_.hardware_parameters["tool_voltage"]);
     tool_comm_setup->setToolVoltage(static_cast<urcl::ToolVoltage>(tool_voltage));
 
     using ParityT = std::underlying_type<urcl::Parity>::type;
@@ -367,7 +366,7 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     //
     // Note: This parameter is only evaluated, when the parameter "use_tool_communication"
     // is set to TRUE.  Then, this parameter is required.
-    const parity = std::stoi(info_.hardware_parameters["tool_parity"]);
+    const ParityT parity = std::stoi(info_.hardware_parameters["tool_parity"]);
     tool_comm_setup->setParity(static_cast<urcl::Parity>(parity));
 
     // Baud rate used for tool communication. Will be set as soon as the UR-Program on the robot is
