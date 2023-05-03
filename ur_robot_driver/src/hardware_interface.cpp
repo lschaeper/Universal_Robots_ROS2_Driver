@@ -388,7 +388,6 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     const int stop_bits = std::stoi(info_.hardware_parameters["tool_stop_bits"]);
     tool_comm_setup->setStopBits(static_cast<uint32_t>(stop_bits));
 
-    int rx_idle_chars;
     // Number of idle chars for the RX unit used for tool communication. Will be set as soon as the UR-Program on the
     // robot is started. Valid values: min=1.0, max=40.0
     //
