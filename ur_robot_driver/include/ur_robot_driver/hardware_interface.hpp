@@ -174,11 +174,14 @@ protected:
   // asynchronous commands
   std::array<double, 18> standard_dig_out_bits_cmd_;
   std::array<double, 2> standard_analog_output_cmd_;
+  double tool_voltage_cmd_;
   double io_async_success_;
   double target_speed_fraction_cmd_;
   double scaling_async_success_;
   double resend_robot_program_cmd_;
   double resend_robot_program_async_success_;
+  double zero_ftsensor_cmd_;
+  double zero_ftsensor_async_success_;
   double open_gripper_cmd_;
   double open_gripper_async_success_;
   double close_gripper_cmd_;
