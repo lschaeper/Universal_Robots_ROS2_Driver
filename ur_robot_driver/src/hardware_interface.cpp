@@ -315,7 +315,7 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
   // Enables non_blocking_read mode. Should only be used with combined_robot_hw. Disables error generated when read
   // returns without any data, sets the read timeout to zero, and synchronises read/write operations. Enabling this when
   // not used with combined_robot_hw can suppress important errors and affect real-time performance.
-    non_blocking_read_ = (info_.hardware_parameters["non_blocking_read"] == "true") ||
+  non_blocking_read_ = (info_.hardware_parameters["non_blocking_read"] == "true") ||
                        (info_.hardware_parameters["non_blocking_read"] == "True");
 
   // Specify gain for servoing to position in joint space.
@@ -370,7 +370,6 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     const parity = std::stoi(info_.hardware_parameters["tool_parity"]);
     tool_comm_setup->setParity(static_cast<urcl::Parity>(parity));
 
-    int baud_rate;
     // Baud rate used for tool communication. Will be set as soon as the UR-Program on the robot is
     // started. See UR documentation for valid baud rates.
     //
@@ -379,7 +378,6 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     const int baud_rate = std::stoi(info_.hardware_parameters["tool_baud_rate"]);
     tool_comm_setup->setBaudRate(static_cast<uint32_t>(baud_rate));
 
-    int stop_bits;
     // Number of stop bits used for tool communication. Will be set as soon as the UR-Program on the robot is
     // started. Can be 1 or 2.
     //
@@ -396,7 +394,6 @@ URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous
     const int rx_idle_chars = std::stoi(info_.hardware_parameters["tool_rx_idle_chars"]);
     tool_comm_setup->setRxIdleChars(rx_idle_chars);
 
-    int tx_idle_chars;
     // Number of idle chars for the TX unit used for tool communication. Will be set as soon as the UR-Program on the
     // robot is started. Valid values: min=0.0, max=40.0
     //
